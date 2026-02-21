@@ -2,7 +2,7 @@ CREATE TABLE user_(
    userId VARCHAR(50),
    userPassword VARCHAR(50),
    userEmail VARCHAR(50),
-   isAdmin LOGICAL,
+   isAdmin BOOLEAN,
    PRIMARY KEY(userId)
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE room(
 CREATE TABLE seat(
    roomId INT,
    seatId INT,
-   seatRow BYTE,
+   seatRow VARCHAR(1),
    seatColumn VARCHAR(1),
    PRIMARY KEY(roomId, seatId),
    FOREIGN KEY(roomId) REFERENCES room(roomId)

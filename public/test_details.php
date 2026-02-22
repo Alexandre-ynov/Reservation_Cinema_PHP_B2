@@ -10,4 +10,4 @@ $filmId = $_GET['id'] ?? 1;
 
 // Appelle le contrôleur
 $controller = new detailsController();
-$controller->showDetails($filmId);
+$controller->showFilmDetails($filmId);

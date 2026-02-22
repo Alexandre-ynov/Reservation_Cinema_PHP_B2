@@ -6,8 +6,9 @@ class detailsController {
         $this->model = new detailsModel();
     }
 
-    public function showDetails($id) {
-        $film = $this->model->getFilmById($id);
+    public function showFilmDetails($filmId) {
+        $film = $this->model->getFilmById($filmId);
+        $sceances = $this->model->getSceancesByFilmId($filmId);
         if ($film) {
             include __DIR__ . '/../views/details.php';
         } else {

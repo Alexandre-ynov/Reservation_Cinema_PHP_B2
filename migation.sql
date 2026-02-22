@@ -35,7 +35,7 @@ CREATE TABLE seat(
 
 CREATE TABLE sceance(
    sceanceId VARCHAR(50),
-   sceanceDate VARCHAR(50),
+   sceanceDate DATETIME,
    filmId VARCHAR(50) NOT NULL,
    roomId INT NOT NULL,
    PRIMARY KEY(sceanceId),

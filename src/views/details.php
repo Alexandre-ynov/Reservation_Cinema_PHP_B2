@@ -21,5 +21,22 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <h2>Sceances available</h2>
+        <div class="sceances-list">
+            <?php if (!empty($sceances)): ?>
+                <?php foreach ($sceances as $sceance): ?>
+                    <a href="/booking?sceanceId=<?php echo htmlspecialchars($sceance['sceanceId']); ?>" class="btn-sceance">
+                        <div class="sceance-info">
+                            <span class="date"><?php echo htmlspecialchars($sceance['sceanceDate']); ?></span>
+                            <span class="room">Salle <?php echo htmlspecialchars($sceance['roomId']); ?></span>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No sceances found for this film.</p>
+            <?php endif; ?>
+        </div>
+    </div>
 </body>
 </html>

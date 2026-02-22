@@ -72,4 +72,60 @@ function redirect_to($path) {
     header("Location: $path");
     exit();
 }
+
+/**
+ * Sanitize user input
+ * @param string $input Raw input string
+ * @return string Sanitized string
+ */
+function sanitize_input($input) {
+    $input = trim($input);
+    $input = stripslashes($input);
+    $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+    return $input;
+}
+
+/**
+ * Validate email format
+ * @param string $email Email address to validate
+ * @return bool True if valid, false otherwise
+ */
+function validate_email($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+/**
+ * Validate login input data
+ * @param string $email User email
+ * @param string $password User password
+ * @return array Array with 'valid' bool and 'errors' array
+ */
+function validate_login_input($email, $password) {
+    $errors = [];
     
+    // Check if email is empty
+    if (empty($email)) {
+        $errors[] = "Email is required";
+    } elseif (!validate_email($email)) {
+        $errors[] = "Invalid email format";
+    }
+    
+    // Check if password is empty
+    if (empty($password)) {
+        $errors[] = "Password is required";
+    }
+    
+    return [
+        'valid' => empty($errors),
+        'errors' => $errors
+    ];
+}
+
+/**
+ * Get POST input safely
+ * @param string $key POST key
+ * @return string Sanitized POST value or empty string
+ */
+function get_post_input($key) {
+    return isset($_POST[$key]) ? sanitize_input($_POST[$key]) : '';
+}

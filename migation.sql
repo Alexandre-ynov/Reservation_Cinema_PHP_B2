@@ -1,8 +1,8 @@
 CREATE TABLE user_(
    userId VARCHAR(50),
-   userPassword VARCHAR(50),
+   userPassword VARCHAR(250),
    userEmail VARCHAR(50),
-   isAdmin LOGICAL,
+   isAdmin BOOLEAN,
    PRIMARY KEY(userId)
 );
 
@@ -12,6 +12,8 @@ CREATE TABLE film(
    filmAuthor VARCHAR(50),
    filmDetail VARCHAR(50),
    filmCategory VARCHAR(50),
+   filmTime SMALLINT,
+   filmPoster VARCHAR(50),
    PRIMARY KEY(filmId)
 );
 
@@ -25,7 +27,7 @@ CREATE TABLE room(
 CREATE TABLE seat(
    roomId INT,
    seatId INT,
-   seatRow BYTE,
+   seatRow SMALLINT,
    seatColumn VARCHAR(1),
    PRIMARY KEY(roomId, seatId),
    FOREIGN KEY(roomId) REFERENCES room(roomId)
@@ -51,3 +53,4 @@ CREATE TABLE reservation(
    FOREIGN KEY(roomId, seatId) REFERENCES seat(roomId, seatId),
    FOREIGN KEY(sceanceId) REFERENCES sceance(sceanceId)
 );
+

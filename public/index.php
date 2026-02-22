@@ -37,7 +37,7 @@ if ($request_uri === '/login' && $request_method === 'GET') {
     process_delete_account($pdo);
 } elseif ($request_uri === '/home') {
     require_once __DIR__ . '/../src/controllers/homeController.php';
-    show_home_page();
+    show_home_page($pdo);
 } elseif ($request_uri === '/details' && $request_method === 'GET') {
     $filmId = $_GET['filmId'] ?? null;
     if ($filmId) {

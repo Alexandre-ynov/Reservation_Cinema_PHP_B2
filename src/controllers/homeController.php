@@ -12,15 +12,23 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Include required files
 require_once __DIR__ . '/loginController.php';
+require_once __DIR__ . '/../models/homeModel.php';
 
 /**
  * Show home page
+ * @param PDO $pdo Database connection
  * @return void
  */
-function show_home_page() {
+function show_home_page($pdo = null) {
     // Redirect to login if not logged in
     if (!is_user_logged_in()) {
         redirect_to('/login');
+    }
+    
+    // Get movies from database if PDO connection is available
+    $movies = [];
+    if ($pdo) {
+        $movies = get_all_movies($pdo);
     }
     
     require_once __DIR__ . '/../views/home.php';

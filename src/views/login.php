@@ -63,6 +63,13 @@ unset($_SESSION['error_message'], $_SESSION['success_message'], $_SESSION['error
         </div>
         
         <div>
+            <label>
+                <input type="checkbox" id="remember_me" name="remember_me" value="1">
+                Remember me
+            </label>
+        </div>
+        
+        <div>
             <button type="submit">Login</button>
         </div>
     </form>

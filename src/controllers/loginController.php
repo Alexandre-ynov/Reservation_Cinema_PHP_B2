@@ -16,13 +16,75 @@ require_once __DIR__ . '/../models/loginModel.php';
 /**
  * Initialize user session after successful login
  * @param array $user_data User information from database
+ * @param bool $remember_me Whether to set remember me cookie
  * @return void
  */
-function init_user_session($user_data) {
+function init_user_session($user_data, $remember_me = false) {
     $_SESSION['user_id'] = $user_data['userId'];
     $_SESSION['user_email'] = $user_data['userEmail'];
     $_SESSION['is_admin'] = $user_data['isAdmin'];
     $_SESSION['is_logged_in'] = true;
+    
+    // Set remember me cookie if requested
+    if ($remember_me) {
+        set_remember_me_cookie($user_data['userId']);
+    }
+}
+
+/**
+ * Set remember me cookie
+ * @param string $user_id User ID
+ * @return void
+ */
+function set_remember_me_cookie($user_id) {
+    $token = bin2hex(random_bytes(32));
+    $cookie_value = $user_id . ':' . $token;
+    
+    // Cookie expires in 30 days
+    $expire = time() + (30 * 24 * 60 * 60);
+    setcookie('remember_me', $cookie_value, $expire, '/', '', false, true);
+}
+
+/**
+ * Check and process remember me cookie
+ * @param PDO $pdo Database connection
+ * @return bool True if cookie is valid and user logged in, false otherwise
+ */
+function check_remember_me_cookie($pdo) {
+    if (!isset($_COOKIE['remember_me'])) {
+        return false;
+    }
+    
+    $cookie_parts = explode(':', $_COOKIE['remember_me']);
+    if (count($cookie_parts) !== 2) {
+        return false;
+    }
+    
+    $user_id = $cookie_parts[0];
+    
+    // Get user from database
+    $user = get_user_by_id($pdo, $user_id);
+    
+    if (!$user) {
+        // Invalid user, clear cookie
+        clear_remember_me_cookie();
+        return false;
+    }
+    
+    // Initialize session with user data
+    init_user_session($user, false);
+    
+    return true;
+}
+
+/**
+ * Clear remember me cookie
+ * @return void
+ */
+function clear_remember_me_cookie() {
+    if (isset($_COOKIE['remember_me'])) {
+        setcookie('remember_me', '', time() - 3600, '/', '', false, true);
+    }
 }
 
 /**
@@ -59,6 +121,9 @@ function destroy_user_session() {
     if (isset($_COOKIE[session_name()])) {
         setcookie(session_name(), '', time() - 3600, '/');
     }
+    
+    // Clear remember me cookie
+    clear_remember_me_cookie();
     
     session_destroy();
 }
@@ -148,6 +213,7 @@ function handle_login($pdo) {
     // Get and sanitize input
     $email = get_post_input('email');
     $password = get_post_input('password');
+    $remember_me = isset($_POST['remember_me']) && $_POST['remember_me'] == '1';
     
     // Validate input
     $validation = validate_login_input($email, $password);
@@ -168,8 +234,8 @@ function handle_login($pdo) {
         ];
     }
     
-    // Initialize session
-    init_user_session($user);
+    // Initialize session with remember me option
+    init_user_session($user, $remember_me);
     
     return [
         'success' => true,
@@ -202,9 +268,15 @@ function handle_logout() {
 
 /**
  * Show login page
+ * @param PDO $pdo Database connection
  * @return void
  */
-function show_login_page() {
+function show_login_page($pdo = null) {
+    // Check remember me cookie first if pdo is available
+    if ($pdo && !is_user_logged_in() && check_remember_me_cookie($pdo)) {
+        redirect_to('/home');
+    }
+    
     // Redirect to home if already logged in
     if (is_user_logged_in()) {
         redirect_to('/home');
@@ -250,3 +322,56 @@ function process_logout() {
     redirect_to($response['redirect']);
 }
 
+/**
+ * Handle delete account request
+ * @param PDO $pdo Database connection
+ * @return array Response with success status and message
+ */
+function handle_delete_account($pdo) {
+    // Check if user is logged in
+    if (!is_user_logged_in()) {
+        return [
+            'success' => false,
+            'message' => 'You must be logged in to delete your account',
+            'redirect' => '/login'
+        ];
+    }
+    
+    $user_id = get_current_user_id();
+    
+    // Delete user account
+    $result = delete_user_account($pdo, $user_id);
+    
+    if (!$result['success']) {
+        return [
+            'success' => false,
+            'message' => 'Failed to delete account: ' . ($result['error'] ?? 'Unknown error')
+        ];
+    }
+    
+    // Destroy session after successful deletion
+    destroy_user_session();
+    
+    return [
+        'success' => true,
+        'message' => 'Your account has been successfully deleted',
+        'redirect' => '/login'
+    ];
+}
+
+/**
+ * Process delete account request
+ * @param PDO $pdo Database connection
+ * @return void
+ */
+function process_delete_account($pdo) {
+    $response = handle_delete_account($pdo);
+    
+    if ($response['success']) {
+        $_SESSION['success_message'] = $response['message'];
+    } else {
+        $_SESSION['error_message'] = $response['message'];
+    }
+    
+    redirect_to($response['redirect']);
+}

@@ -24,7 +24,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
 
 // Simple routing for testing
 if ($request_uri === '/login' && $request_method === 'GET') {
-    show_login_page();
+    show_login_page($pdo);
 } elseif ($request_uri === '/login' && $request_method === 'POST') {
     process_login($pdo);
 } elseif ($request_uri === '/register' && $request_method === 'GET') {
@@ -33,6 +33,11 @@ if ($request_uri === '/login' && $request_method === 'GET') {
     process_registration($pdo);
 } elseif ($request_uri === '/logout') {
     process_logout();
+} elseif ($request_uri === '/delete-account' && $request_method === 'POST') {
+    process_delete_account($pdo);
+} elseif ($request_uri === '/home') {
+    require_once __DIR__ . '/../src/controllers/homeController.php';
+    show_home_page();
 } elseif ($request_uri === '/details' && $request_method === 'GET') {
     $filmId = $_GET['filmId'] ?? null;
     if ($filmId) {

@@ -79,3 +79,32 @@ function user_exists_by_email($pdo, $email) {
         return false;
     }
 }
+
+/**
+ * Delete user account
+ * @param PDO $pdo Database connection
+ * @param string $user_id User ID
+ * @return array Result with success status and error message if any
+ */
+function delete_user_account($pdo, $user_id) {
+    try {
+        // First delete all reservations for this user
+        $stmt = $pdo->prepare("DELETE FROM reservation WHERE userId = ?");
+        $stmt->execute([$user_id]);
+        
+        // Then delete the user
+        $stmt = $pdo->prepare("DELETE FROM user_ WHERE userId = ?");
+        $result = $stmt->execute([$user_id]);
+        
+        return [
+            'success' => $result,
+            'error' => null
+        ];
+    } catch (PDOException $e) {
+        error_log("Error deleting user account: " . $e->getMessage());
+        return [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+    }
+}

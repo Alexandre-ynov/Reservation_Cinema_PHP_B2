@@ -27,8 +27,21 @@ function show_home_page($pdo = null) {
     
     // Get movies from database if PDO connection is available
     $movies = [];
+    $categories = [];
+    $selected_category = $_GET['category'] ?? 'all';
+    $search_query = $_GET['search'] ?? '';
+    
     if ($pdo) {
-        $movies = get_all_movies($pdo);
+        $categories = get_all_categories($pdo);
+        
+        if (!empty($search_query)) {
+            // Search mode
+            $movies = search_movies($pdo, $search_query);
+        } elseif ($selected_category === 'all') {
+            $movies = get_all_movies($pdo);
+        } else {
+            $movies = get_movies_by_category($pdo, $selected_category);
+        }
     }
     
     require_once __DIR__ . '/../views/home.php';

@@ -80,8 +80,8 @@ class BookingController {
             return;
         }
 
-        // All seats are available, redirect to reservation confirmation
-        // Store selected seats in session for reservation page
+        // All seats are available, redirect to pricing page
+        // Store selected seats in session for pricing page
         session_start();
         $_SESSION['booking'] = [
             'sceanceId' => $sceanceId,
@@ -89,6 +89,6 @@ class BookingController {
             'roomId' => $roomId
         ];
 
-        redirect('/reservation');
+        redirect('/reservation/pricing');
     }
 }

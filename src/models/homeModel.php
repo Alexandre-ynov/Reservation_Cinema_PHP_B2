@@ -12,7 +12,7 @@
  */
 function get_all_movies($pdo) {
     try {
-        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory FROM film ORDER BY filmTitle ASC");
+        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory, filmTime, filmPoster FROM film ORDER BY filmTitle ASC");
         $stmt->execute();
         return $stmt->fetchAll();
     } catch (PDOException $e) {
@@ -40,17 +40,62 @@ function get_movie_by_id($pdo, $film_id) {
 
 /**
  * Get movies by category
+ * Handles multiple categories separated by /
  * @param PDO $pdo Database connection
  * @param string $category Film category
  * @return array List of movies or empty array
  */
 function get_movies_by_category($pdo, $category) {
     try {
-        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory FROM film WHERE filmCategory = ? ORDER BY filmTitle ASC");
-        $stmt->execute([$category]);
-        return $stmt->fetchAll();
+        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory, filmTime, filmPoster FROM film ORDER BY filmTitle ASC");
+        $stmt->execute();
+        $all_movies = $stmt->fetchAll();
+        
+        // Filter movies that have the category (handles multiple categories with /)
+        $filtered_movies = [];
+        foreach ($all_movies as $movie) {
+            $categories = explode('/', $movie['filmCategory']);
+            $categories = array_map('trim', $categories);
+            
+            if (in_array($category, $categories)) {
+                $filtered_movies[] = $movie;
+            }
+        }
+        
+        return $filtered_movies;
     } catch (PDOException $e) {
         error_log("Error fetching movies by category: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Get all unique categories from films
+ * @param PDO $pdo Database connection
+ * @return array List of unique categories
+ */
+function get_all_categories($pdo) {
+    try {
+        $stmt = $pdo->prepare("SELECT DISTINCT filmCategory FROM film");
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        
+        $categories = [];
+        foreach ($results as $row) {
+            // Split categories if multiple separated by /
+            $cats = explode('/', $row['filmCategory']);
+            foreach ($cats as $cat) {
+                $cat = trim($cat);
+                if (!empty($cat) && !in_array($cat, $categories)) {
+                    $categories[] = $cat;
+                }
+            }
+        }
+        
+        sort($categories);
+        return $categories;
+    } catch (PDOException $e) {
+        error_log("Error fetching categories: " . $e->getMessage());
         return [];
     }
 }
@@ -63,9 +108,9 @@ function get_movies_by_category($pdo, $category) {
  */
 function search_movies($pdo, $search_term) {
     try {
-        $search_pattern = "%{$search_term}%";
-        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory FROM film WHERE filmTitle LIKE ? OR filmAuthor LIKE ? ORDER BY filmTitle ASC");
-        $stmt->execute([$search_pattern, $search_pattern]);
+        $search_pattern = "%" . strtolower($search_term) . "%";
+        $stmt = $pdo->prepare("SELECT filmId, filmTitle, filmAuthor, filmDetail, filmCategory, filmTime, filmPoster FROM film WHERE LOWER(filmTitle) LIKE ? ORDER BY filmTitle ASC");
+        $stmt->execute([$search_pattern]);
         return $stmt->fetchAll();
     } catch (PDOException $e) {
         error_log("Error searching movies: " . $e->getMessage());

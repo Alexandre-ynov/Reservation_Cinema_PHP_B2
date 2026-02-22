@@ -30,7 +30,6 @@ class Database{
         try{
             $connexion = new PDO ("mysql:host=$localhost;dbname=$db_name;",$username,$password) or die ();
             $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "Connexion successfull";
             return $connexion;
         }catch(PDOException $connexionError) {
             echo "Connexion error : " . $connexionError->getMessage();

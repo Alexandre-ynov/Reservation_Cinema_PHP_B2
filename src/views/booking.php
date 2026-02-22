@@ -1,3 +1,4 @@
+<?php include __DIR__ . '/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +33,12 @@
         }
         .seats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            grid-template-columns: repeat(10, 50px);
             gap: 10px;
-            max-width: 800px;
+            max-width: 550px;
             margin: 20px auto;
             padding: 20px;
+            justify-content: center;
         }
         .seat {
             width: 40px;
@@ -165,19 +167,57 @@
             
             <!-- Seats Grid -->
             <div class="seats-grid">
-                <?php foreach ($seats as $seat): ?>
-                    <?php if ($seat['status'] === 'available'): ?>
-                        <div class="seat available" 
-                             data-seat-id="<?php echo htmlspecialchars($seat['seatId']); ?>"
-                             onclick="toggleSeat(this, <?php echo htmlspecialchars($seat['seatId']); ?>)">
-                            <?php echo htmlspecialchars($seat['seatRow']) . htmlspecialchars($seat['seatColumn']); ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="seat reserved">
-                            <?php echo htmlspecialchars($seat['seatRow']) . htmlspecialchars($seat['seatColumn']); ?>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                <?php 
+                $seatsByRow = [];
+                foreach ($seats as $seat) {
+                    $row = $seat['seatRow'];
+                    if (!isset($seatsByRow[$row])) {
+                        $seatsByRow[$row] = [];
+                    }
+                    $seatsByRow[$row][] = $seat;
+                }
+                ksort($seatsByRow);
+                
+                $columns = [];
+                foreach ($seats as $seat) {
+                    $columns[$seat['seatColumn']] = true;
+                }
+                ksort($columns);
+                
+                foreach ($seatsByRow as $rowNum => $rowSeats): 
+                    foreach (array_keys($columns) as $col):
+                        $seat = null;
+                        foreach ($rowSeats as $s) {
+                            if ($s['seatColumn'] === $col) {
+                                $seat = $s;
+                                break;
+                            }
+                        }
+                        
+                        if ($seat): 
+                            if ($seat['status'] === 'available'): 
+                ?>
+                                <div class="seat available" 
+                                     data-seat-id="<?php echo htmlspecialchars($seat['seatId']); ?>"
+                                     onclick="toggleSeat(this, <?php echo htmlspecialchars($seat['seatId']); ?>)">
+                                    <?php echo htmlspecialchars($seat['seatColumn']) . htmlspecialchars($seat['seatRow']); ?>
+                                </div>
+                <?php 
+                            else: 
+                ?>
+                                <div class="seat reserved">
+                                    <?php echo htmlspecialchars($seat['seatColumn']) . htmlspecialchars($seat['seatRow']); ?>
+                                </div>
+                <?php 
+                            endif;
+                        else:
+                ?>
+                            <div style="width: 50px; height: 40px;"></div>
+                <?php 
+                        endif;
+                    endforeach;
+                endforeach;
+                ?>
             </div>
 
             <!-- Selected seats count -->

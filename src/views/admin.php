@@ -1,3 +1,4 @@
+<?php include __DIR__ . '/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,8 +96,8 @@
 				<form method="POST" action="/admin/films/add">
 					<h3>Add Film</h3>
 					<div class="form-group">
-						<label for="addFilmId">Film ID</label>
-						<input type="text" name="filmId" id="addFilmId" required>
+						<label for="addFilmId">Film ID (optional)</label>
+						<input type="text" name="filmId" id="addFilmId">
 					</div>
 					<div class="form-group">
 						<label for="addFilmTitle">Title</label>
@@ -128,35 +129,38 @@
 				<form method="POST" action="/admin/films/update">
 					<h3>Update Film</h3>
 					<div class="form-group">
-						<label for="updateFilmId">Film ID</label>
-						<input type="text" name="filmId" id="updateFilmId" required>
-					</div>
-					<div class="form-group">
-						<label for="updateFilmTitle">Title</label>
-						<input type="text" name="filmTitle" id="updateFilmTitle" required>
-					</div>
-					<div class="form-group">
-						<label for="updateFilmAuthor">Author</label>
-						<input type="text" name="filmAuthor" id="updateFilmAuthor">
-					</div>
-					<div class="form-group">
-						<label for="updateFilmDetail">Detail</label>
-						<textarea name="filmDetail" id="updateFilmDetail" rows="3"></textarea>
-					</div>
-					<div class="form-group">
-						<label for="updateFilmCategory">Category</label>
-						<input type="text" name="filmCategory" id="updateFilmCategory">
-					</div>
-					<div class="form-group">
-						<label for="updateFilmTime">Duration (minutes)</label>
-						<input type="number" name="filmTime" id="updateFilmTime" min="1">
-					</div>
-					<div class="form-group">
-						<label for="updateFilmPoster">Poster (filename)</label>
-						<input type="text" name="filmPoster" id="updateFilmPoster">
-					</div>
-					<button class="btn" type="submit">Update Film</button>
-				</form>
+                        <label for="updateFilmId">Film ID *</label>
+                        <input type="text" name="filmId" id="updateFilmId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmTitle">Title</label>
+                        <input type="text" name="filmTitle" id="updateFilmTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmAuthor">Author</label>
+                        <input type="text" name="filmAuthor" id="updateFilmAuthor">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmDetail">Detail</label>
+                        <textarea name="filmDetail" id="updateFilmDetail" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmCategory">Category</label>
+                        <input type="text" name="filmCategory" id="updateFilmCategory">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmTime">Duration (minutes)</label>
+                        <input type="number" name="filmTime" id="updateFilmTime" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateFilmPoster">Poster (filename)</label>
+                        <input type="text" name="filmPoster" id="updateFilmPoster">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <small>Only fill fields you want to update. Leave empty to keep existing values.</small>
+                    </div>
+                    <button class="btn" type="submit">Update Film</button>
+                </form>
 
 				<form method="POST" action="/admin/films/delete">
 					<h3>Delete Film</h3>
@@ -175,8 +179,8 @@
 				<form method="POST" action="/admin/sceances/add">
 					<h3>Add Sceance</h3>
 					<div class="form-group">
-						<label for="sceanceId">Sceance ID</label>
-						<input type="text" name="sceanceId" id="sceanceId" required>
+						<label for="sceanceId">Sceance ID (optional)</label>
+						<input type="text" name="sceanceId" id="sceanceId">
 					</div>
 					<div class="form-group">
 						<label for="sceanceDate">Date</label>
@@ -216,6 +220,34 @@
 					<button class="btn btn-danger" type="submit">Delete Sceance</button>
 				</form>
 			</div>
+		</div>
+
+		<div class="admin-card">
+			<h2>Films List</h2>
+			<table class="admin-table">
+				<thead>
+					<tr>
+						<th>Film ID</th>
+						<th>Title</th>
+						<th>Author</th>
+						<th>Category</th>
+						<th>Duration (min)</th>
+						<th>Poster</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($films as $film): ?>
+						<tr>
+							<td><strong><?php echo htmlspecialchars($film['filmId']); ?></strong></td>
+							<td><?php echo htmlspecialchars($film['filmTitle']); ?></td>
+							<td><?php echo htmlspecialchars($film['filmAuthor']); ?></td>
+							<td><?php echo htmlspecialchars($film['filmCategory']); ?></td>
+							<td><?php echo htmlspecialchars($film['filmTime']); ?></td>
+							<td><?php echo htmlspecialchars($film['filmPoster']); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 		</div>
 
 		<div class="admin-card">

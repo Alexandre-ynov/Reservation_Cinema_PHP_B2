@@ -59,7 +59,10 @@ if ($request_uri === '/login' && $request_method === 'GET') {
 } elseif ($request_uri === '/booking/select' && $request_method === 'POST') {
     $bookingController = new BookingController();
     $bookingController->selectSeats();
-} elseif ($request_uri === '/reservation' && $request_method === 'POST') {
+} elseif ($request_uri === '/reservation/pricing' && $request_method === 'GET') {
+    $reservationController = new ReservationController();
+    $reservationController->showPricingPage();
+} elseif ($request_uri === '/reservation/confirm' && $request_method === 'POST') {
     $reservationController = new ReservationController();
     $reservationController->confirmReservation();
 } elseif ($request_uri === '/reservation' && $request_method === 'GET') {

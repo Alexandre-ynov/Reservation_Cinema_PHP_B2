@@ -9,6 +9,22 @@ class AdminModel {
 	}
 
 	/**
+	 * Generate a unique film ID
+	 * @return string
+	 */
+	public function generateFilmId() {
+		return 'FILM_' . uniqid();
+	}
+
+	/**
+	 * Generate a unique sceance ID
+	 * @return string
+	 */
+	public function generateSceanceId() {
+		return 'SCEANCE_' . uniqid();
+	}
+
+	/**
 	 * Create a new film
 	 * @param array $data Film data
 	 * @return bool True on success, false otherwise
@@ -34,30 +50,48 @@ class AdminModel {
 	}
 
 	/**
-	 * Update an existing film
-	 * @param array $data Film data
+	 * Update an existing film (only provided fields are updated)
+	 * @param string $filmId Film ID (required)
+	 * @param array $data Film data to update (optional fields)
 	 * @return bool True on success, false otherwise
 	 */
-	public function updateFilm($data) {
+	public function updateFilm($filmId, $data) {
 		try {
-			$sql = "UPDATE film
-					SET filmTitle = :filmTitle,
-						filmAuthor = :filmAuthor,
-						filmDetail = :filmDetail,
-						filmCategory = :filmCategory,
-						filmTime = :filmTime,
-						filmPoster = :filmPoster
-					WHERE filmId = :filmId";
+			$updates = [];
+			$params = [':filmId' => $filmId];
+
+			if (!empty($data['filmTitle'])) {
+				$updates[] = "filmTitle = :filmTitle";
+				$params[':filmTitle'] = $data['filmTitle'];
+			}
+			if (!empty($data['filmAuthor'])) {
+				$updates[] = "filmAuthor = :filmAuthor";
+				$params[':filmAuthor'] = $data['filmAuthor'];
+			}
+			if (!empty($data['filmDetail'])) {
+				$updates[] = "filmDetail = :filmDetail";
+				$params[':filmDetail'] = $data['filmDetail'];
+			}
+			if (!empty($data['filmCategory'])) {
+				$updates[] = "filmCategory = :filmCategory";
+				$params[':filmCategory'] = $data['filmCategory'];
+			}
+			if (isset($data['filmTime']) && $data['filmTime'] > 0) {
+				$updates[] = "filmTime = :filmTime";
+				$params[':filmTime'] = $data['filmTime'];
+			}
+			if (!empty($data['filmPoster'])) {
+				$updates[] = "filmPoster = :filmPoster";
+				$params[':filmPoster'] = $data['filmPoster'];
+			}
+
+			if (empty($updates)) {
+				return false; // Nothing to update
+			}
+
+			$sql = "UPDATE film SET " . implode(", ", $updates) . " WHERE filmId = :filmId";
 			$stmt = $this->db->prepare($sql);
-			return $stmt->execute([
-				':filmId' => $data['filmId'],
-				':filmTitle' => $data['filmTitle'],
-				':filmAuthor' => $data['filmAuthor'],
-				':filmDetail' => $data['filmDetail'],
-				':filmCategory' => $data['filmCategory'],
-				':filmTime' => $data['filmTime'],
-				':filmPoster' => $data['filmPoster']
-			]);
+			return $stmt->execute($params);
 		} catch (PDOException $e) {
 			echo "Error updating film: " . $e->getMessage();
 			return false;

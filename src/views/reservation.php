@@ -1,3 +1,4 @@
+<?php include __DIR__ . '/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,7 +129,7 @@
                 </div>
                 <div class="recap-item">
                     <span class="recap-label">Total Seats Reserved:</span>
-                    <span class="recap-value"><?php echo count($_SESSION['booking']['seats'] ?? []); ?></span>
+                    <span class="recap-value"><?php echo isset($totalSeatsReserved) ? $totalSeatsReserved : 0; ?></span>
                 </div>
             </div>
 
@@ -150,7 +151,7 @@
                                 <div class="reservation-details">
                                     <p><strong>Date & Time:</strong> <?php echo htmlspecialchars($reservation['sceanceDate']); ?></p>
                                     <p><strong>Room:</strong> <?php echo htmlspecialchars($reservation['roomId']); ?> - <?php echo htmlspecialchars($reservation['roomCharacteristic']); ?></p>
-                                    <p><strong>Seat:</strong> Row <?php echo htmlspecialchars($reservation['seatId']); ?></p>
+                                    <p><strong>Seat:</strong> <?php echo htmlspecialchars($reservation['seatColumn']) . htmlspecialchars($reservation['seatRow']); ?></p>
                                 </div>
                             </div>
                         </div>

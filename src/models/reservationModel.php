@@ -36,11 +36,12 @@ class ReservationModel {
      */
     public function getUserReservations($userId) {
         try {
-            $sql = "SELECT r.*, f.filmTitle, f.filmPoster, s.sceanceDate, rm.roomId, rm.roomCharacteristic
+            $sql = "SELECT r.*, f.filmTitle, f.filmPoster, s.sceanceDate, rm.roomId, rm.roomCharacteristic, st.seatRow, st.seatColumn
                     FROM reservation r
                     JOIN sceance s ON r.sceanceId = s.sceanceId
                     JOIN film f ON s.filmId = f.filmId
                     JOIN room rm ON r.roomId = rm.roomId
+                    JOIN seat st ON r.seatId = st.seatId AND r.roomId = st.roomId
                     WHERE r.userId = :userId
                     ORDER BY s.sceanceDate DESC";
             

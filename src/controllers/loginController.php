@@ -129,3 +129,73 @@ function validate_login_input($email, $password) {
 function get_post_input($key) {
     return isset($_POST[$key]) ? sanitize_input($_POST[$key]) : '';
 }
+
+/**
+ * Handle user login request
+ * @param PDO $pdo Database connection
+ * @return array Response with success status and message
+ */
+function handle_login($pdo) {
+    // Check if already logged in
+    if (is_user_logged_in()) {
+        return [
+            'success' => false,
+            'message' => 'Already logged in',
+            'redirect' => '/home'
+        ];
+    }
+    
+    // Get and sanitize input
+    $email = get_post_input('email');
+    $password = get_post_input('password');
+    
+    // Validate input
+    $validation = validate_login_input($email, $password);
+    if (!$validation['valid']) {
+        return [
+            'success' => false,
+            'errors' => $validation['errors']
+        ];
+    }
+    
+    // Verify credentials
+    $user = verify_user_credentials($pdo, $email, $password);
+    
+    if (!$user) {
+        return [
+            'success' => false,
+            'message' => 'Invalid email or password'
+        ];
+    }
+    
+    // Initialize session
+    init_user_session($user);
+    
+    return [
+        'success' => true,
+        'message' => 'Login successful',
+        'redirect' => '/home',
+        'user' => $user
+    ];
+}
+
+/**
+ * Handle logout request
+ * @return array Response with success status
+ */
+function handle_logout() {
+    if (!is_user_logged_in()) {
+        return [
+            'success' => false,
+            'message' => 'Not logged in'
+        ];
+    }
+    
+    destroy_user_session();
+    
+    return [
+        'success' => true,
+        'message' => 'Logout successful',
+        'redirect' => '/login'
+    ];
+}

@@ -1,33 +1,31 @@
 <?php
 
-declare(strict_types=1);
+// Initialize database connection
+$pdo = require_once __DIR__ . '/../src/config/database.php';
 
-class Router {
-    private array $routes = [];
+// Include controllers
+require_once __DIR__ . '/../src/controllers/loginController.php';
+require_once __DIR__ . '/../src/controllers/registerController.php';
 
-    public function add(string $method, string $path, array $controller) {
-        $path = $this->normalizePath($path);
-        $this->routes[] = [ 'path' => $path, 'method' => strtoupper($method), 'controller' => $controller, 'middlewares' => [] ];
-        }
-        
-    private function normalizePath(string $path): string { 
-        $path = trim($path, '/'); $path = "/{$path}/";
-        $path = preg_replace('#[/]{2,}#', '/', $path);
-        return $path; 
-    } 
+// Get the request URI and method
+$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$request_method = $_SERVER['REQUEST_METHOD'];
 
-    public function dispatch(string $path) { 
-        $path = $this->normalizePath($path); 
-        $method = strtoupper($_SERVER['REQUEST_METHOD']);
-        foreach ($this->routes as $route) 
-            { if ( !preg_match("#^{$route['path']}$#", $path) || 
-            $route['method'] !== $method ) { continue; } }
-            
-        [$class, $function] = $route['controller'];
-
-        $controllerInstance = new $class;
-
-        $controllerInstance->{$function}();
-        }
-    
+// Simple routing for testing
+if ($request_uri === '/login' && $request_method === 'GET') {
+    show_login_page();
+} elseif ($request_uri === '/login' && $request_method === 'POST') {
+    process_login($pdo);
+} elseif ($request_uri === '/register' && $request_method === 'GET') {
+    show_register_page();
+} elseif ($request_uri === '/register' && $request_method === 'POST') {
+    process_registration($pdo);
+} elseif ($request_uri === '/logout') {
+    process_logout();
+} elseif ($request_uri === '/') {
+    header('Location: /login');
+    exit();
+} else {
+    http_response_code(404);
+    echo "404 - Page not found";
 } 

@@ -1,7 +1,7 @@
 CREATE TABLE user_(
    userId VARCHAR(50),
-   userPassword VARCHAR(50),
-   userEmail VARCHAR(50),
+   userPassword VARCHAR(255),
+   userEmail VARCHAR(100),
    isAdmin BOOLEAN,
    PRIMARY KEY(userId)
 );

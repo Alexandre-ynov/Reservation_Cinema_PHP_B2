@@ -199,3 +199,54 @@ function handle_logout() {
         'redirect' => '/login'
     ];
 }
+
+/**
+ * Show login page
+ * @return void
+ */
+function show_login_page() {
+    // Redirect to home if already logged in
+    if (is_user_logged_in()) {
+        redirect_to('/home');
+    }
+    
+    require_once __DIR__ . '/../views/login.php';
+}
+
+/**
+ * Process login form submission
+ * @param PDO $pdo Database connection
+ * @return void
+ */
+function process_login($pdo) {
+    $response = handle_login($pdo);
+    
+    if ($response['success']) {
+        $_SESSION['success_message'] = $response['message'];
+        redirect_to($response['redirect']);
+    } else {
+        // Store errors in session
+        if (isset($response['errors'])) {
+            $_SESSION['errors'] = $response['errors'];
+        }
+        if (isset($response['message'])) {
+            $_SESSION['error_message'] = $response['message'];
+        }
+        redirect_to('/login');
+    }
+}
+
+/**
+ * Process logout request
+ * @return void
+ */
+function process_logout() {
+    $response = handle_logout();
+    
+    if ($response['success']) {
+        $_SESSION['success_message'] = $response['message'];
+    }
+    
+    redirect_to($response['redirect']);
+}
+

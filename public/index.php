@@ -10,6 +10,7 @@ require_once __DIR__ . '/../src/controllers/registerController.php';
 require_once __DIR__ . '/../src/controllers/bookingController.php';
 require_once __DIR__ . '/../src/controllers/detailsControlleur.php';
 require_once __DIR__ . '/../src/controllers/reservationController.php';
+require_once __DIR__ . '/../src/controllers/adminController.php';
 
 // Simple redirect function for PHP Development Server
 function redirect($path) {
@@ -59,6 +60,24 @@ if ($request_uri === '/login' && $request_method === 'GET') {
 } elseif ($request_uri === '/reservation' && $request_method === 'GET') {
     $reservationController = new ReservationController();
     $reservationController->showUserReservations();
+} elseif ($request_uri === '/admin' && $request_method === 'GET') {
+    $adminController = new AdminController();
+    $adminController->showDashboard();
+} elseif ($request_uri === '/admin/films/add' && $request_method === 'POST') {
+    $adminController = new AdminController();
+    $adminController->addFilm();
+} elseif ($request_uri === '/admin/films/update' && $request_method === 'POST') {
+    $adminController = new AdminController();
+    $adminController->updateFilm();
+} elseif ($request_uri === '/admin/films/delete' && $request_method === 'POST') {
+    $adminController = new AdminController();
+    $adminController->deleteFilm();
+} elseif ($request_uri === '/admin/sceances/add' && $request_method === 'POST') {
+    $adminController = new AdminController();
+    $adminController->addSceance();
+} elseif ($request_uri === '/admin/sceances/delete' && $request_method === 'POST') {
+    $adminController = new AdminController();
+    $adminController->deleteSceance();
 } elseif ($request_uri === '/') {
     header('Location: /login');
     exit();

@@ -12,7 +12,7 @@ DB_PASSWORD = [WRITE YOUR PASSWORD];
 ## Lunch the web site in local
 -Copy paste in the root of the project :
 php -S localhost:8000 -t public
-
+(C:\wamp64\bin\php\php8.3.28\php.exe -S localhost:8000 -t public)
 -Open :
 http://localhost:8000/
 

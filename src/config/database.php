@@ -20,14 +20,18 @@ if (file_exists($envFile)) {
  * We retrieve the database connection parameters from the environment variables for security reasons, 
  * so that they are not hardcoded in the code and can be easily changed without modifying the code.
  */
-$localhost = $_ENV['DB_HOST'];
+$db_host = $_ENV['DB_HOST'];
 $db_name = $_ENV['DB_NAME'];
-$username = $_ENV['DB_USERNAME'];
-$password = $_ENV['DB_PASSWORD'];
+$db_username = $_ENV['DB_USERNAME'];
+$db_password = $_ENV['DB_PASSWORD'];
 
-try{
-    $connexion = new PDO ("mysql:host=$localhost;dbname=$db_name;",$username,$password);
-    echo "Connexion successfull";
-}catch(PDOException $connexionError) {
-    echo "Connexion error : " . $connexionError->getMessage();
+try {
+    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_username, $db_password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch(PDOException $connection_error) {
+    error_log("Database connection error: " . $connection_error->getMessage());
+    die("Database connection failed. Please try again later.");
 }
+
+return $pdo;

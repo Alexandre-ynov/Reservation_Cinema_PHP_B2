@@ -89,7 +89,6 @@ class BookingController {
             'roomId' => $roomId
         ];
 
-        header('Location: /reservation');
-        exit();
+        redirect('/reservation');
     }
 }

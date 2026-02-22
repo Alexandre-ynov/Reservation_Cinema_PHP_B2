@@ -1,26 +1,25 @@
 <?php
 
 // Initialize database connection
-$pdo = require_once __DIR__ . '/../src/config/database.php';
+require_once __DIR__ . '/../src/config/database.php';
+$pdo = Database::getConnection();
 
 // Include controllers
 require_once __DIR__ . '/../src/controllers/loginController.php';
 require_once __DIR__ . '/../src/controllers/registerController.php';
 require_once __DIR__ . '/../src/controllers/bookingController.php';
 require_once __DIR__ . '/../src/controllers/detailsControlleur.php';
+require_once __DIR__ . '/../src/controllers/reservationController.php';
+
+// Simple redirect function for PHP Development Server
+function redirect($path) {
+    header('Location: ' . $path);
+    exit();
+}
 
 // Get the request URI and method
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $request_method = $_SERVER['REQUEST_METHOD'];
-
-// Remove base path for subfolder deployment
-$base_path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-if ($base_path !== '' && strpos($request_uri, $base_path) === 0) {
-    $request_uri = substr($request_uri, strlen($base_path));
-}
-if ($request_uri === '') {
-    $request_uri = '/';
-}
 
 // Simple routing for testing
 if ($request_uri === '/login' && $request_method === 'GET') {
@@ -54,6 +53,12 @@ if ($request_uri === '/login' && $request_method === 'GET') {
 } elseif ($request_uri === '/booking/select' && $request_method === 'POST') {
     $bookingController = new BookingController();
     $bookingController->selectSeats();
+} elseif ($request_uri === '/reservation' && $request_method === 'POST') {
+    $reservationController = new ReservationController();
+    $reservationController->confirmReservation();
+} elseif ($request_uri === '/reservation' && $request_method === 'GET') {
+    $reservationController = new ReservationController();
+    $reservationController->showUserReservations();
 } elseif ($request_uri === '/') {
     header('Location: /login');
     exit();

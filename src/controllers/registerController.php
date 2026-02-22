@@ -118,7 +118,7 @@ function show_register_page() {
     // Redirect to home if already logged in
     require_once __DIR__ . '/loginController.php';
     if (is_user_logged_in()) {
-        redirect_to('/home');
+        redirect('/home');
     }
     
     require_once __DIR__ . '/../views/register.php';
@@ -134,7 +134,7 @@ function process_registration($pdo) {
     
     if ($response['success']) {
         $_SESSION['success_message'] = $response['message'];
-        redirect_to($response['redirect']);
+        redirect('/login');
     } else {
         // Store errors in session
         if (isset($response['errors'])) {
@@ -150,6 +150,6 @@ function process_registration($pdo) {
             'email' => $_POST['email'] ?? ''
         ];
         
-        redirect_to('/register');
+        redirect('/register');
     }
 }

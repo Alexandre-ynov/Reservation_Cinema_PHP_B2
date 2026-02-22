@@ -17,7 +17,7 @@
             <p>Synopsis : <?php echo $film['filmDetail']; ?></p>
             <p>Author : <?php echo $film['filmAuthor']; ?></p>
             <div class="poster">
-                <img src="/Reservation_Cinema_PHP_B2/public/pictures/<?php echo $film['filmPoster']; ?>" alt="<?php echo $film['filmTitle']; ?>">
+                <img src="/pictures/<?php echo $film['filmPoster']; ?>" alt="<?php echo $film['filmTitle']; ?>">
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="sceances-list">
             <?php if (!empty($sceances)): ?>
                 <?php foreach ($sceances as $sceance): ?>
-                    <a href="/Reservation_Cinema_PHP_B2/public/booking?sceanceId=<?php echo htmlspecialchars($sceance['sceanceId']); ?>" class="btn-sceance">
+                    <a href="/booking?sceanceId=<?php echo htmlspecialchars($sceance['sceanceId']); ?>" class="btn-sceance">
                         <div class="sceance-info">
                             <span class="date"><?php echo htmlspecialchars($sceance['sceanceDate']); ?></span>
                             <span class="room">Salle <?php echo htmlspecialchars($sceance['roomId']); ?></span>

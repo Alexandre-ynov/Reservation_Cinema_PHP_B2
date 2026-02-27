@@ -1,31 +1,13 @@
--- phpMyAdmin SQL Dump
--- version 5.2.3
--- https://www.phpmyadmin.net/
---
--- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 22 fév. 2026 à 22:55
--- Version du serveur : 8.4.7
--- Version de PHP : 8.3.28
+-- Cinema Database Migration
+-- Database: cinema
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
+SET FOREIGN_KEY_CHECKS = 0;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de données : `cinema`
---
-
--- --------------------------------------------------------
-
---
--- Structure de la table `film`
---
+-- ============================================
+-- Films Table
+-- ============================================
 
 DROP TABLE IF EXISTS `film`;
 CREATE TABLE IF NOT EXISTS `film` (
@@ -39,10 +21,6 @@ CREATE TABLE IF NOT EXISTS `film` (
   PRIMARY KEY (`filmId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 
---
--- Déchargement des données de la table `film`
---
-
 INSERT INTO `film` (`filmId`, `filmTitle`, `filmAuthor`, `filmDetail`, `filmCategory`, `filmTime`, `filmPoster`) VALUES
 ('1', 'Marsupilami', 'Philippe Lacheau', 'Pour sauver son emploi, David accepte un plan foireux : ramener un mystérieux colis d’Amérique du Sud.\r\nIl se retrouve à bord d’une croisière avec son ex Tess, son fils Léo, et son collègue Stéphane, aussi benêt que maladroit, dont David se sert pour transporter le colis à sa place.\r\nTout dérape lorsque ce dernier l’ouvre accidentellement : un adorable bébé Marsupilami apparait et le voyage vire au chaos !\r\nLa bande à Fifi est de retour et elle s’est fait un nouveau copain…', 'Comédie', 99, 'marsupilami.jpg'),
 ('FILM_699f3a63550db', 'CHERS PARENTS', 'Emmanuel Patron', 'Alice et Vincent Gauthier convoquent en urgence leurs trois enfants. La fratrie débarque affolée, craignant le pire… mais, bonne nouvelle, leurs parents ont en fait touché le jackpot ! Le problème : ils ne comptent pas leur donner un centime...', 'Comédie', 86, 'chersParents.jpg'),
@@ -54,11 +32,9 @@ INSERT INTO `film` (`filmId`, `filmTitle`, `filmAuthor`, `filmDetail`, `filmCate
 ('FILM_699f50c01ad6b', 'LOL 2.0', 'Lisa Azuelos', 'revient vivre chez elle après un échec professionnel et sentimental. Et comme une surprise n’arrive jamais seule, son fils Théo lui annonce qu’elle va devenir grand-mère ! Entre chocs générationnels, rêves en mutation et nouveaux élans amoureux… Anne comprend que la vie ne suit jamais tout à fait le plan prévu, et qu’à tout âge, on continue toujours d’apprendre à grandir.', 'Comédie', 105, 'LOL2.0.jpg'),
 ('FILM_699f514640daf', '\"Hurlevent\"', 'Emerald Fennell', 'Vision moderne de la passion absolue unissant Heathcliff et Catherine, une romance légendaire qui défie le temps et la raison.', 'Drame / Romance', 136, 'hurlevent.jpg');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `reservation`
---
+-- ============================================
+-- Reservations Table
+-- ============================================
 
 DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE IF NOT EXISTS `reservation` (
@@ -71,19 +47,13 @@ CREATE TABLE IF NOT EXISTS `reservation` (
   KEY `sceanceId` (`sceanceId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 
---
--- Déchargement des données de la table `reservation`
---
-
 INSERT INTO `reservation` (`userId`, `roomId`, `seatId`, `sceanceId`) VALUES
 ('1', 3, 3014, 'SCEANCE_699f81eabc6c3'),
 ('1', 3, 3015, 'SCEANCE_699f81eabc6c3');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `room`
---
+-- ============================================
+-- Rooms Table
+-- ============================================
 
 DROP TABLE IF EXISTS `room`;
 CREATE TABLE IF NOT EXISTS `room` (
@@ -93,20 +63,14 @@ CREATE TABLE IF NOT EXISTS `room` (
   PRIMARY KEY (`roomId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 
---
--- Déchargement des données de la table `room`
---
-
 INSERT INTO `room` (`roomId`, `roomNumberOfSeats`, `roomCharacteristic`) VALUES
 (1, 50, 'CLASSIQUE'),
 (2, 20, 'LUXE'),
 (3, 100, 'ECONOMIC');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `sceance`
---
+-- ============================================
+-- Séances Table
+-- ============================================
 
 DROP TABLE IF EXISTS `sceance`;
 CREATE TABLE IF NOT EXISTS `sceance` (
@@ -119,20 +83,14 @@ CREATE TABLE IF NOT EXISTS `sceance` (
   KEY `roomId` (`roomId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 
---
--- Déchargement des données de la table `sceance`
---
-
 INSERT INTO `sceance` (`sceanceId`, `sceanceDate`, `filmId`, `roomId`) VALUES
 ('SCEANCE_699f81a903ecf', '2027-01-26 06:00:00', 'FILM_699f514640daf', 1),
 ('SCEANCE_699f81d195335', '2026-12-26 08:17:00', 'FILM_699f3a63550db', 2),
 ('SCEANCE_699f81eabc6c3', '2026-11-26 20:12:00', 'FILM_699f3a63550db', 3);
 
--- --------------------------------------------------------
-
---
--- Structure de la table `seat`
---
+-- ============================================
+-- Seats Table
+-- ============================================
 
 DROP TABLE IF EXISTS `seat`;
 CREATE TABLE IF NOT EXISTS `seat` (
@@ -142,10 +100,6 @@ CREATE TABLE IF NOT EXISTS `seat` (
   `seatColumn` varchar(1) COLLATE latin1_bin DEFAULT NULL,
   PRIMARY KEY (`roomId`,`seatId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
-
---
--- Déchargement des données de la table `seat`
---
 
 INSERT INTO `seat` (`roomId`, `seatId`, `seatRow`, `seatColumn`) VALUES
 (3, 3001, 1, 'A'),
@@ -319,11 +273,9 @@ INSERT INTO `seat` (`roomId`, `seatId`, `seatRow`, `seatColumn`) VALUES
 (3, 3099, 10, 'I'),
 (3, 3100, 10, 'J');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `user_`
---
+-- ============================================
+-- Users Table
+-- ============================================
 
 DROP TABLE IF EXISTS `user_`;
 CREATE TABLE IF NOT EXISTS `user_` (
@@ -334,14 +286,7 @@ CREATE TABLE IF NOT EXISTS `user_` (
   PRIMARY KEY (`userId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 
---
--- Déchargement des données de la table `user_`
---
-
 INSERT INTO `user_` (`userId`, `userPassword`, `userEmail`, `isAdmin`) VALUES
 ('1', '$2y$10$CvOLyCOE0vWWnYoLd0hduezHi5etiFYLfbKy0D0KooukCRoalGDoW', 'alexandre.charlier@ynov.com', 1);
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+SET FOREIGN_KEY_CHECKS = 1;
